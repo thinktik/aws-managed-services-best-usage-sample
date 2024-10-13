@@ -1,0 +1,13 @@
+description: This is ${spring.application.name},Power by Spring on JDK21
+indexUrl: https://aws.amazon.com/
+server:
+  port: 8092
+spring:
+  application:
+    name: redisson-demo
+  redis:
+    redisson:
+      # AWS ElastiCache Cluster Enables(对应Redis Cluster版本,能多写多读)时的设置
+      #file: classpath:aws-elasticache-redis/redis-cluster.yaml
+      # AWS Cluster Disable(对应Redis Master-Slave或Sentinel版本,只能一写多读)时的设置
+      file: classpath:aws-elasticache-redis/redis-replica.yaml

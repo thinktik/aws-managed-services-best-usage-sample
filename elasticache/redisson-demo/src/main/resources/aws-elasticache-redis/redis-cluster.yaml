@@ -1,0 +1,65 @@
+---
+# AWS ElastiCache Cluster Enables(对应Redis Cluster版本,能多写多读)时的设置
+# https://redisson.org/docs/integration-with-spring/#spring-boot-starter
+# https://redisson.org/docs/configuration/
+# https://redisson.org/docs/configuration/#cluster-mode
+clusterServersConfig:
+  # Add Redis cluster node or Redis endpoint addresss in host:port format. Redisson discovers automatically cluster topology.
+  nodeAddresses:
+    - "rediss://clustercfg.valkey-cluster.xxx.cnw1.cache.amazonaws.com.cn:6379"
+  password: password_xxx
+  clientName: ${spring.application.name}
+  # Defines array of allowed SSL protocols.
+  sslProtocols:
+    - TLSv1.3
+    - TLSv1.2
+  # Enables cluster slots check during Redisson startup.
+  checkSlotsCoverage: true
+  # Scan interval in milliseconds. Applied to Redis clusters topology scan.
+  scanInterval: 1000
+  # Set node type used for read operation.
+  readMode: "MASTER"
+  # Defines whether to use sharded subscription feature available in Redis 7.0+.
+  shardedSubscriptionMode: AUTO
+  # If pooled connection not used for a timeout time and current connections amount bigger than minimum idle connections pool size, then it will closed and removed from pool. Value in milliseconds.
+  idleConnectionTimeout: 10000
+  # Timeout in milliseconds during connecting to any Redis server.
+  connectTimeout: 10000
+  # Redis server response timeout in milliseconds. Starts to countdown when Redis command was succesfully sent.
+  timeout: 3000
+  # Error will be thrown if Redis command can't be sended to Redis server after retryAttempts. But if it sent succesfully then timeout will be started.
+  retryAttempts: 3
+  # Time interval in milliseconds after which another one attempt to send Redis command will be executed.
+  retryInterval: 1500
+  # Interval of Redis Slave reconnection attempt when it was excluded from internal list of available servers. On each timeout event Redisson tries to connect to disconnected Redis server. Value in milliseconds.
+  failedSlaveReconnectionInterval: 3000
+  # Defines failed Redis Slave node detector object which implements failed node detection logic
+  failedSlaveNodeDetector: !<org.redisson.client.FailedConnectionDetector> { }
+  # Сonnection load balancer for multiple Redis servers
+  loadBalancer: !<org.redisson.connection.balancer.RoundRobinLoadBalancer> { }
+  # Subscriptions per subscribe connection limit.
+  subscriptionsPerConnection: 5
+  # Minimum idle connection pool size for subscription (pub/sub) channels.
+  subscriptionConnectionMinimumIdleSize: 1
+  # Maximum connection pool size for subscription (pub/sub) channels.
+  subscriptionConnectionPoolSize: 50
+  # Redis 'slave' node minimum idle connection amount for each slave node.
+  slaveConnectionMinimumIdleSize: 24
+  # Redis 'slave' node maximum connection pool size for each slave node
+  slaveConnectionPoolSize: 64
+  # Minimum idle connections amount per Redis master node.
+  masterConnectionMinimumIdleSize: 24
+  # Redis 'master' node maximum connection pool size
+  masterConnectionPoolSize: 64
+  # Set node type used for subscription operation
+  subscriptionMode: "SLAVE"
+  # This setting allows to detect and reconnect broken connections using PING command.
+  pingConnectionInterval: 30000
+  # Enables TCP keepAlive for connection.
+  keepAlive: true
+  # Enables TCP noDelay for connection.
+  tcpNoDelay: true
+threads: 16
+nettyThreads: 32
+codec: !<org.redisson.codec.Kryo5Codec> { }
+transportMode: "NIO"
