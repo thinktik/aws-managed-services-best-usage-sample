@@ -1,0 +1,50 @@
+---
+#-------AWS Cluster Disable(对应Redis Master-Slave或Sentinel版本,只能一写多读)----------------------------------------------
+spring:
+  data:
+    redis:
+      # 服务器地址。
+      host: master.valkey-replica.xxx.cnw1.cache.amazonaws.com.cn
+      # 服务器端口。
+      port: 6379
+      # Redis密码。
+      password: password_xxx
+      # 使用Redis 0号库。
+      database: 0
+      # 设置SSL(AWS ElastiCache Redis开启密码登陆时必须开启SSL/TLS)。
+      ssl:
+        enabled: true
+      # 客户端名称(这里默认为项目名称)。
+      client-name: ${spring.application.name}
+      # 读取操作超时。
+      timeout: 5s
+      # 新建连接超时。
+      connect-timeout:
+      # 明确使用lettuce做为redis客户端。
+      client-type: lettuce
+      lettuce:
+        # 连接池设置。
+        pool:
+          # lettuce开启连接池。
+          enabled: true
+          # 最大活动连接数。
+          max-active: 8
+          # 最大空闲连接数。
+          max-idle: 4
+          # 最小空闲连接数。
+          min-idle: 2
+          # 从连接池中申请连接的最大等待时间；当连接池所有连接耗尽时获取一个Redis连接将阻塞等待，超时之后抛出异常。
+          max-wait: 3s
+          # 清理空闲连接的时间间隔。当设置一个正值时，将启动清理线程，每隔一段时间时隔清理空闲连接。
+          time-between-eviction-runs: 120s
+        # lettuce对Redis集群进行感知，减少Redis集群维护导致的连接中断时间，加快连接池的恢复速度。
+        cluster:
+          refresh:
+            # Redis集群拓扑信息自适应刷新，这时Lettuce客户端会根据集群的状态和与集群节点的交互情况来自动调整刷新集群信息的频率。
+            adaptive: true
+            # 动态现并刷新所有Redis集群拓扑信息。
+            dynamic-refresh-sources: true
+            # Redis集群拓扑刷新时间。
+            period: 30s
+        # 关闭客户端连接前等待时间；Lettuce底层使用Netty通信，在断开Netty连接时可能还有活跃的连接正在执行Redis操作任务，适当设置等待时间以确保强制关闭前所有Redis任务都得到正确处理，这可以避免数据操作异常。
+        shutdown-timeout: 5s

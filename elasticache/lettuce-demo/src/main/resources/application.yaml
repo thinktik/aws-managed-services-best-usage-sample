@@ -1,0 +1,13 @@
+server:
+  port: 8091
+spring:
+  application:
+    name: lettuce-demo
+    url: https://aws.amazon.com/
+    description: This is ${spring.application.name},Power by Spring on JDK21
+  config:
+    import:
+      # AWS ElastiCache Cluster Enables(对应Redis Cluster版本,能多写多读)时的设置
+      #- classpath:database-settings/redis-cluster.yaml
+      # AWS Cluster Disable(对应Redis Master-Slave或Sentinel版本,只能一写多读)时的设置
+      - classpath:database-settings/redis-replica.yaml
