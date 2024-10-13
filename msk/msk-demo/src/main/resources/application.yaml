@@ -1,0 +1,74 @@
+spring:
+  application:
+    name: msk-demo
+  kafka:
+    bootstrap-servers: 192.168.50.61:9092
+    # https://kafka.apache.org/documentation/#configuration
+    # https://docs.confluent.io/platform/current/clients/consumer.html
+    # https://docs.confluent.io/platform/current/installation/configuration/consumer-configs.html
+    consumer:
+      isolation-level: read_committed
+      enable-auto-commit: true
+      auto-commit-interval: 1s
+      auto-offset-reset: latest
+      group-id: msk-java
+      fetch-max-wait: 1s
+      fetch-min-size: 1KB
+      heartbeat-interval: 1s
+      max-poll-records: 4096
+      properties:
+        allow:
+          auto:
+            create:
+              topics: false
+        # https://kafka.apache.org/documentation/#consumerconfigs_partition.assignment.strategy
+        partition:
+          assignment:
+            strategy: org.apache.kafka.clients.consumer.CooperativeStickyAssignor
+        # https://kafka.apache.org/documentation/#consumerconfigs_check.crcs
+        check:
+          crcs: true
+        # https://kafka.apache.org/documentation/#consumerconfigs_group.protocol
+        group:
+          protocol: CLASSIC
+        # https://kafka.apache.org/documentation/#consumerconfigs_client.rack
+        # https://aws.amazon.com/blogs/big-data/reduce-network-traffic-costs-of-your-amazon-msk-consumers-with-rack-awareness
+    #        client:
+    #          rack: cnnw1-az1
+    # https://docs.confluent.io/platform/current/installation/configuration/producer-configs.html#
+    # https://docs.confluent.io/platform/current/clients/producer.html
+    producer:
+      compression-type: zstd
+      retries: 128
+      acks: all
+      batch-size: 32KB
+      buffer-memory: 64MB
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      #      transaction-id-prefix: kafka_tx
+      properties:
+        # https://kafka.apache.org/documentation/#producerconfigs_linger.ms
+        linger:
+          ms: 20
+        # https://kafka.apache.org/documentation/#producerconfigs_enable.idempotence
+        enable:
+          idempotence: true
+    listener:
+      auto-startup: true
+      missing-topics-fatal: true
+      type: single
+      concurrency: 1
+      # 开启auto commit后，下面有关手动commit的就不能设置
+#      async-acks: true
+#      ack-mode: batch
+#logging:
+#  level:
+#    org:
+#      apache:
+#        kafka:
+#          clients:
+#            consumer:
+#              internals:
+#                AbstractFetch: info
+server:
+  port: 8095
