@@ -1,0 +1,13 @@
+server:
+  port: 8093
+spring:
+  application:
+    name: documentdb-demo
+    url: https://aws.amazon.com/
+    description: This is ${spring.application.name},Power by Spring on JDK21
+  config:
+    import:
+      # AWS DocumentDB/MongoDB Shard 模式
+      #- classpath:database-settings/docdb-cluster.yaml
+      # AWS DocumentDB/MongoDB Replica 模式
+      - classpath:database-settings/docdb-replica.yaml

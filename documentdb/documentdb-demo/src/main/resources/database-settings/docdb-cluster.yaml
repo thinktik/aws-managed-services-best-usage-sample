@@ -1,0 +1,79 @@
+---
+# -----AWS DocumentDB/MongoDB Shard 模式---------------------------------------------------------------------------------
+# AWS DocumentDB Cluster Shard 模式文档: https://docs.aws.amazon.com/documentdb/latest/developerguide/docdb-using-elastic-clusters.html
+spring:
+  data:
+    mongodb:
+      # AWS DocumentDB Shard's cluster endpoint地址。
+      host: docdb-replica.cluster-xxx.docdb.cn-northwest-1.amazonaws.com.cn
+      # AWS DocumentDB 服务端口(默认27017)。
+      port: 27017
+      # AWS DocumentDB 用户名。
+      username: user_xxx
+      # AWS DocumentDB 密码。
+      password: password_xxx
+      # AWS DocumentDB 数据库名称。
+      database: db_xxx
+      # AWS DocumentDB SSL设置
+      ssl:
+        # 启用SSL
+        enabled: true
+        # AWS DocumentDB启用SSL后,客户端侧需要指定pem文件，这里我可以引用aws-documentdb-pem
+        bundle: aws-documentdb-pem
+      # 为shard模式下的集群进行精细化设置: AWS DocumentDB/MongoDB连接参数: https://www.mongodb.com/zh-cn/docs/manual/reference/connection-string/
+      shard:
+        options:
+          # 客户端和AWS DocumentDB服务器建立TCP连接的超时时间，单位为毫秒，默认为10000毫秒。
+          connectTimeoutMS: 3000
+          # 客户端通过已建立的TCP连接发送请求(SQL)后等待响应超时的时间，单位为毫秒，默认为永不超时。
+          socketTimeoutMS: 5000
+          # 开启client-server间的传输压缩，可以减少传输带宽要求；可以指定多种压缩算法。
+          compressors: zstd
+          # 连接池中最大的连接数量，默认为100。
+          maxPoolSize: 8
+          # 连接池中最小的连接数量，默认为0。
+          minPoolSize: 2
+          # 连接池中某个连接在被删除和关闭之前可以在池中保持空闲的最长时间，单位为毫秒。
+          maxIdleTimeMS: 60000
+          # 写关注设置(AWS DocumentDB和MongoDB略有不同),建议设置为majority保证多数副本确认，这样保证数据的高可用性
+          # https://docs.aws.amazon.com/documentdb/latest/developerguide/transactions.html & https://www.mongodb.com/zh-cn/docs/manual/reference/write-concern/#std-label-wc-w
+          w: majority
+          # 写关注操作超时，wtimeoutMS指定写关注的时间限制（以毫秒为单位）
+          wtimeoutMS: 3000
+          # 要求AWS DocumentDB/MongoDB确认写入操作已写入本地日志，保证意外情况发生后可以进行事务的恢复或回滚
+          journal: true
+          # 读关注设置(AWS DocumentDB和MongoDB略有不同)，建议设置为majority，这样查询会返回已被副本集多数成员确认的数据。
+          # https://docs.aws.amazon.com/documentdb/latest/developerguide/transactions.html & https://www.mongodb.com/zh-cn/docs/manual/reference/connection-string-options/#readconcern-options
+          readConcernLevel: majority
+          # 读取偏好选项，非常适合用于读写分离的场景：https://www.mongodb.com/zh-cn/docs/manual/reference/connection-string-options/#read-preference-options
+          readPreference: primaryPreferred
+          # 读取偏好选项设置后，节点的陈旧程度（以秒为单位）容忍时间，如果写节点-只读节点间同步延迟超过了容忍值，则将该只读节点移除出备选只读节点列表，后续读取查询不再在该只读节点上就进行。
+          maxStalenessSeconds: 120
+          appName: ${spring.application.name}
+          retryWrites: false
+          retryReads: true
+          # 进行一次option初步拼接
+          option-string: "appName=${spring.application.name}\
+            &connectTimeoutMS=${spring.data.mongodb.shard.options.connectTimeoutMS}\
+            &socketTimeoutMS=${spring.data.mongodb.shard.options.socketTimeoutMS}\
+            &maxPoolSize=${spring.data.mongodb.shard.options.maxPoolSize}\
+            &minPoolSize=${spring.data.mongodb.shard.options.minPoolSize}\
+            &maxIdleTimeMS=${spring.data.mongodb.shard.options.maxIdleTimeMS}\
+            &compressors=${spring.data.mongodb.shard.options.compressors}\
+            &w=${spring.data.mongodb.shard.options.w}\
+            &wtimeoutMS=${spring.data.mongodb.shard.options.wtimeoutMS}\
+            &journal=${spring.data.mongodb.shard.options.journal}\
+            &readConcernLevel=${spring.data.mongodb.shard.options.readConcernLevel}\
+            &readPreference=${spring.data.mongodb.shard.options.readPreference}\
+            &maxStalenessSeconds=${spring.data.mongodb.shard.options.maxStalenessSeconds}\
+            &retryWrites=false\
+            &retryReads=true"
+    # 最终拼接为完整的AWS DocumentDB Replica集群连接URL;在正常连接的同时实现了连接池设置、长连接超时设置、client-server间数据传输压缩等。
+    uri: mongodb://${spring.data.mongodb.username}:${spring.data.mongodb.password}@${spring.data.mongodb.host}:${spring.data.mongodb.port}/${spring.data.mongodb.database}?${spring.data.mongodb.shard.options.option-string}
+  # 定义SSL pem文件位置，当AWS DocumentDB启用SSL后,客户端侧需要指定pem文件，这里我设置它的名字为aws-documentdb-pem
+  ssl:
+    bundle:
+      pem:
+        aws-documentdb-pem:
+          truststore:
+            certificate: classpath:database-settings/docdb-ssl-bundle/global-bundle.pem
