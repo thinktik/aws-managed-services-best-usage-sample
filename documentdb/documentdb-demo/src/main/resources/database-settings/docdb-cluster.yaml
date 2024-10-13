@@ -5,7 +5,7 @@ spring:
   data:
     mongodb:
       # AWS DocumentDB Shard's cluster endpoint地址。
-      host: docdb-replica.cluster-xxx.docdb.cn-northwest-1.amazonaws.com.cn
+      host: docdb-cluster-xxx.us-east-1.docdb-elastic.amazonaws.com
       # AWS DocumentDB 服务端口(默认27017)。
       port: 27017
       # AWS DocumentDB 用户名。
@@ -18,8 +18,8 @@ spring:
       ssl:
         # 启用SSL
         enabled: true
-        # AWS DocumentDB启用SSL后,客户端侧需要指定pem文件，这里我可以引用aws-documentdb-pem
-        bundle: aws-documentdb-pem
+        # AWS DocumentDB启用SSL后,客户端侧需要指定pem文件，这里我可以引用aws-documentdb-pem; AWS DocumentDB Shard不需要指定pem
+        #bundle: aws-documentdb-pem
       # 为shard模式下的集群进行精细化设置: AWS DocumentDB/MongoDB连接参数: https://www.mongodb.com/zh-cn/docs/manual/reference/connection-string/
       shard:
         options:
