@@ -2,7 +2,10 @@ spring:
   application:
     name: msk-demo
   kafka:
-    bootstrap-servers: 192.168.50.61:9092
+    bootstrap-servers:
+      - b-1.mskcluster.1lv4eu.c3.kafka.us-east-1.amazonaws.com:9092
+      - b-3.mskcluster.1lv4eu.c3.kafka.us-east-1.amazonaws.com:9092
+      - b-2.mskcluster.1lv4eu.c3.kafka.us-east-1.amazonaws.com:9092
     # https://kafka.apache.org/documentation/#configuration
     # https://docs.confluent.io/platform/current/clients/consumer.html
     # https://docs.confluent.io/platform/current/installation/configuration/consumer-configs.html
@@ -33,8 +36,9 @@ spring:
           protocol: CLASSIC
         # https://kafka.apache.org/documentation/#consumerconfigs_client.rack
         # https://aws.amazon.com/blogs/big-data/reduce-network-traffic-costs-of-your-amazon-msk-consumers-with-rack-awareness
-    #        client:
-    #          rack: cnnw1-az1
+        client:
+          # 从初始化后的系统环境变量中获取本程序的宿主机所在的aws availability zone id，如果获取不到默认为""
+          rack: ${AWS_AVAILABILITY_ZONE_ID:""}
     # https://docs.confluent.io/platform/current/installation/configuration/producer-configs.html#
     # https://docs.confluent.io/platform/current/clients/producer.html
     producer:
@@ -61,14 +65,14 @@ spring:
       # 开启auto commit后，下面有关手动commit的就不能设置
 #      async-acks: true
 #      ack-mode: batch
-#logging:
-#  level:
-#    org:
-#      apache:
-#        kafka:
-#          clients:
-#            consumer:
-#              internals:
-#                AbstractFetch: info
+logging:
+  level:
+    org:
+      apache:
+        kafka:
+          clients:
+            consumer:
+              internals:
+                AbstractFetch: debug
 server:
   port: 8095

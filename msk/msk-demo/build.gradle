@@ -29,6 +29,10 @@ dependencies {
     implementation 'org.springframework.integration:spring-integration-http'
     implementation 'org.springframework.integration:spring-integration-kafka'
     implementation 'org.springframework.kafka:spring-kafka'
+    // 引入aws imds相关的依赖，方便读取ec2所在的aws availability zone id
+    implementation 'software.amazon.awssdk:imds:2.28.21'
+    implementation 'software.amazon.awssdk:apache-client:2.28.21'
+
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
