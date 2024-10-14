@@ -15,7 +15,7 @@ public class MskDemoApplication {
     private static final String AVAILABILITY_ZONE_ID;
 
     static {
-        // aws availability zone id初始化为"",在无法获取到zone id作为默认值。这个可以兼容非AWS环境或者出现异常时会退到kafka默认设置。
+        // aws availability zone id初始化为"",在无法获取到zone id作为默认值。这个可以兼容非AWS环境或者出现异常时回退到kafka默认设置。
         String availabilityZoneId = "";
         // https://docs.aws.amazon.com/zh_cn/AWSEC2/latest/UserGuide/ec2-instance-metadata.html
         // https://docs.aws.amazon.com/zh_cn/sdk-for-java/latest/developer-guide/migration-imds.html
