@@ -9,4 +9,4 @@
 | [redisson demo for aws elasticache](./elasticache/redisson-demo/)            | 使用redisson连接aws elasticache redis的最佳实践     |  
 | [Spring data MongoDB demo for aws documentdb](./documentdb/documentdb-demo/) | 使用Spring data MongoDB连接aws documentdb的最佳实践 |  
 | [Spring integration kafka demo for aws msk](./msk/msk-demo/) | 使用Spring integration kafka连接aws msk的最佳实践 |  
-| [Spring mybatis demo for aws rds & aws aurura](./rds/aws-rds-mysql-demo/) | 使用Spring mybatis连接aws rds和aws aurora的最佳实践 |  
+| [Spring mybatis demo for aws rds & aws aurora](./rds/aws-rds-mysql-demo/) | 使用Spring mybatis连接aws rds和aws aurora的最佳实践 |  
